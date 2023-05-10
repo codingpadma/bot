@@ -1,0 +1,51 @@
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+using namespace std;
+
+vector<int> findRedundantConnection(vector<vector<int>>& connections) {
+    int n = connections.size();
+    vector<int> parent(n + 1, 0);
+    for (int i = 1; i <= n; i++) {
+        parent[i] = i;
+    }
+    for (auto& edge : connections) {
+        int u = edge[0], v = edge[1];
+        while (u != parent[u]) {
+            u = parent[u];
+        }
+        while (v != parent[v]) {
+            v = parent[v];
+        }
+        if (u == v) {
+            return edge;
+        } else {
+            parent[u] = v;
+        }
+    }
+    return {};
+}
+
+int main() {
+    int n = 4;
+    vector<vector<int>> connections = {{0,1},{1,2},{2,0},{1,3}};
+    vector<int> result = findRedundantConnection(connections);
+    if (result.empty()) {
+        cout << "No redundant connection found!" << endl;
+    } else {
+        cout << "Redundant connection: [" << result[0] << ", " << result[1] << "]" << endl;
+    }
+    return 0;
+}
+
+
+
+
+
+
+EXPLANATION
+
+
+The solution uses the union-find algorithm to detect the redundant connection in the given list of connections. We first initialize an array parent where parent[i] denotes the parent of node i. Initially, each node is its own parent. Then, for each edge in the list of connections, we find the parent of each node using the parent array. If both nodes have the same parent, it means that adding this edge will form a cycle and hence it is a redundant connection. Otherwise, we merge the two nodes by setting the parent of one node to the parent of the other node.
+
+In the end, if no redundant connection is found, we return an empty vector, otherwise, we return the redundant connection.
